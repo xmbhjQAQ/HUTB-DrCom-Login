@@ -2,14 +2,8 @@
 # -*- coding: utf-8 -*-
 
 """
-湖南工商大学 (HUTB) 校园网自动登录脚本 - OpenWrt Router V6
+HUTB校园网自动登录脚本
 修复: "当前页面已超时,请重新刷新页面" 问题
-
-关键修改:
-1. queryPageSet 按 JS 一样使用 params= AES(JSON.stringify(...)) 的二次加密格式
-2. 登录请求不再手拼 URL, 而是用 requests 的 params=, 自动对加密后的 params 做 URL 编码
-3. login_method 从 page/loadConfig 中读取, 不再写死为 1
-"""
 
 import requests
 import json
@@ -260,3 +254,4 @@ if __name__ == "__main__":
         if not check_internet():
             print(f"[{time.strftime('%H:%M:%S')}] 网络断开, 尝试重连 ...")
             login()
+
