@@ -11,7 +11,26 @@
   * **AES 加密适配**：完美模拟浏览器端的 JS 加密逻辑（AES-128-ECB），解决服务端校验失败的问题。
   * **动态握手**：实现了 `queryPageSet` 握手流程，自动获取 `rcn` 和 `login_method`，而非硬编码。
   * **自动掉线重连**：脚本内置守护进程模式，每 60 秒检测一次网络，断网自动重连。
-  * **OpenWrt 友好**：专为路由器环境优化，自动获取 WAN 口 IP。
+  * **OpenWrt 友好**：使用底层 Socket 获取 WAN 口 IP，不依赖外部服务，专为路由器环境优化。
+
+## 🧠 技术原理与实现细节
+
+本脚本完全复刻了 Dr.COM 客户端（网页版）在浏览器中的 JavaScript 执行逻辑，解决了单纯发送 POST 请求导致的“超时”或“非法请求”问题。核心流程如下：
+
+1.  **动态 IP 获取**：
+
+      * 通过 Python 的 `socket` 和 `fcntl` 调用系统底层接口（SIOCGIFADDR），直接从网络接口（如 `wan`）读取内网 IPv4 地址。这比解析 `ifconfig` 文本更稳定高效。
+
+2.  **AES-128-ECB 加密**：
+
+      * 使用了与学校服务器一致的加密密钥，后续若有更新可自行抓包修改变量'AES_KEY'。
+      * 所有关键参数（账号、IP、Mac、User-Agent）在发送前均会被打包成 JSON 并进行 AES 加密（PKCS7 Padding），最后转为 Base64 编码。
+
+3.  **三步握手机制（解决超时核心）**：
+
+      * **Step 1 (loadConfig)**: 向 `/eportal/portal/page/loadConfig` 发起请求，动态获取服务端下发的 `rcn` (Random Challenge Number) 和 `login_method`，防止重放攻击。
+      * **Step 2 (queryPageSet)**: 向 `/eportal/portal/duodian/queryPageSet` 发送加密后的握手包。这相当于“预登录”检查，模拟浏览器加载页面时的行为。
+      * **Step 3 (Login)**: 构造最终的登录 Payload，包含 `v` (随机版本号)、`rcn`、加盐的账号格式（`,0,学号`）等，加密后发送至 `/eportal/portal/login` 完成认证。
 
 ## 🛠️ 环境要求
 
@@ -94,7 +113,7 @@ A: 说明加密库未安装成功。OpenWrt 下请务必运行 `opkg install pyt
 A: 在路由器 SSH 中输入 `ifconfig`。找到那个分配了校园网内网 IP（通常是 `10.x.x.x` 或 `172.x.x.x`）的接口名称。
 
 **Q: 脚本报错 "当前页面已超时"?**
-A: 请确保路由器系统时间准确（NTP 同步正常），因为加密参数中包含时间相关的随机验证机制。
+A: 加密参数中包含时间相关的随机验证机制，请检查路由器系统时间是否准确（NTP 同步正常）。
 
 ## ⚠️ 免责声明
 
