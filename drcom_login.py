@@ -30,11 +30,11 @@ INTERFACE_NAME = "wan"    # OpenWrt 上 联网接口名, 比如 "wan" / "pppoe-w
 
 # ====================================================
 
-BASE_URL   = "https://portal.hutb.edu.cn:802" # Dr.COM 认证服务器地址，按照实际情况修改
+BASE_URL   = "https://portal.hutb.edu.cn:802" # Dr.COM 认证服务器地址，按照实际情况修改，具体获取方式请参考项目说明(待完善)
 LOGIN_URL  = f"{BASE_URL}/eportal/portal/login"
 CONFIG_URL = f"{BASE_URL}/eportal/portal/page/loadConfig"
 QUERY_URL  = f"{BASE_URL}/eportal/portal/duodian/queryPageSet"
-AES_KEY    = "5c1d5ad4dea0e8dd"   # a40.js 里的 AES key
+AES_KEY    = "5c1d5ad4dea0e8dd"   # a40.js 里的 AES key，按照实际情况修改，具体获取方式请参考项目说明(待完善)
 
 # 忽略 SSL 警告
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
