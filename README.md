@@ -1,6 +1,6 @@
 -----
 
-# HUTB 校园网自动登录脚本 (OpenWrt / Python)
+# HUTB 校园网自动登录脚本 (OpenWrt / Python) 理论上适配所有采用最新Drcom哆点web登录方案的学校，仅需改一下endpoint即可
 
 这是一个专为 **湖南工商大学 (HUTB)** 校园网设计的自动登录脚本，适用于部署在 **OpenWrt 路由器** 或其他 Linux 环境上。
 
